@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from "firebase/firestore";
 import { db, COLLECTIONS } from "@/lib/firebase";
+import emailjs from "@emailjs/browser";
 
 const services = [
   "Hair Cut & Styling",
@@ -17,7 +18,6 @@ const services = [
   "Waxing & Threading",
   "Body Polishing",
   "Head Massage",
-  "Other (specify below)",
 ];
 
 const timeSlots = [
@@ -27,16 +27,16 @@ const timeSlots = [
 ];
 
 export default function Booking() {
-    const [formData, setFormData] = useState({
-        name: "",
-        phone: "",
-        email: "",
-        service: "",
-        customService: "",
-        date: "",
-        time: "",
-        message: "",
-    });
+ const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    service: "",
+    customService: "",
+    date: "",
+    time: "",
+    message: "",
+  });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -65,35 +65,36 @@ export default function Booking() {
     setError("");
 
     try {
+      const finalService = formData.service === "Other (specify below)"
+        ? `Other: ${formData.customService}`
+        : formData.service;
+
       // 1. Save booking to Firestore
       await addDoc(collection(db, COLLECTIONS.bookings), {
         name:      formData.name.trim(),
         phone:     formData.phone.trim(),
         email:     formData.email.trim(),
-        service: formData.service === "Other (specify below)" ? `Other: ${formData.customService}`: formData.service,
+        service:   finalService,
         date:      formData.date,
         time:      formData.time,
         message:   formData.message.trim(),
-        status:    "pending", // pending | confirmed | completed | cancelled
+        status:    "pending",
         createdAt: serverTimestamp(),
       });
 
-      // 2. Upsert customer profile (grouped by phone number)
+      // 2. Upsert customer profile
       const customerRef = doc(db, COLLECTIONS.customers, formData.phone.trim());
       const customerSnap = await getDoc(customerRef);
-
       if (customerSnap.exists()) {
-        // Update existing customer
         await setDoc(customerRef, {
           name:          formData.name.trim(),
           phone:         formData.phone.trim(),
           email:         formData.email.trim(),
           totalBookings: increment(1),
           lastBooking:   serverTimestamp(),
-          lastService:   formData.service,
+          lastService:   finalService,
         }, { merge: true });
       } else {
-        // Create new customer
         await setDoc(customerRef, {
           name:          formData.name.trim(),
           phone:         formData.phone.trim(),
@@ -101,9 +102,48 @@ export default function Booking() {
           totalBookings: 1,
           firstBooking:  serverTimestamp(),
           lastBooking:   serverTimestamp(),
-          lastService:   formData.service,
+          lastService:   finalService,
         });
       }
+
+      // 3. Send email notification via EmailJS
+      try {
+        await emailjs.send(
+          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+          {
+            client_name: formData.name.trim(),
+            client_phone: formData.phone.trim(),
+            client_email: formData.email.trim() || "Not provided",
+            service:      finalService,
+            date:         formData.date,
+            time:         formData.time || "Not specified",
+            message:      formData.message.trim() || "No message",
+          },
+          process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+        );
+      } catch (emailErr) {
+        // Email failed but booking is saved — don't block user
+        console.error("Email notification failed:", emailErr);
+      }
+
+      // 4. Open WhatsApp with booking details
+      const waPhone = "919999999999"; // Replace with your real number
+      const waMessage =
+        `🌸 *New Booking — Amara Beauty Parlour*\n\n` +
+        `*Name:* ${formData.name.trim()}\n` +
+        `*Phone:* ${formData.phone.trim()}\n` +
+        `*Email:* ${formData.email.trim() || "Not provided"}\n` +
+        `*Service:* ${finalService}\n` +
+        `*Date:* ${formData.date}\n` +
+        `*Time:* ${formData.time || "Not specified"}\n` +
+        `*Message:* ${formData.message.trim() || "None"}\n\n` +
+        `📋 View in admin: https://amarabeauty.com/admin/bookings`;
+
+      window.open(
+        `https://wa.me/${waPhone}?text=${encodeURIComponent(waMessage)}`,
+        "_blank"
+      );
 
       setSubmitted(true);
     } catch (err) {
@@ -143,9 +183,9 @@ export default function Booking() {
           {/* Contact options */}
           <div className="flex flex-col gap-6">
             {[
-              { icon: "◆", label: "Phone",     value: "+91 99225 66151",      href: "tel:+919922566151" },
+              { icon: "◆", label: "Phone",     value: "+91 99999 99999",      href: "tel:+919999999999" },
               { icon: "◆", label: "WhatsApp",  value: "Chat with us",         href: "#" },
-              { icon: "◆", label: "Email",     value: "hello@amarabeautyparlour.com", href: "mailto:hello@amarabeautyparlour.com" },
+              { icon: "◆", label: "Email",     value: "hello@amarabeauty.com", href: "mailto:hello@amarabeauty.com" },
             ].map((item) => (
               <a key={item.label} href={item.href}
                 className="flex items-center gap-4 group"
@@ -214,7 +254,7 @@ export default function Booking() {
                 </div>
               </div>
               <button
-                onClick={() => { setSubmitted(false); setFormData({ name: "", phone: "", email: "", service: "", customService: "", date: "", time: "", message: "" }); }}
+                onClick={() => { setSubmitted(false); setFormData({ name: "", phone: "", email: "", service: "",customService: "", date: "", time: "", message: "" }); }}
                 className="text-gold border-b border-gold/40 pb-1 text-[11px] tracking-[0.2em] uppercase mt-2 hover:text-ivory hover:border-ivory/40 transition-colors duration-200"
                 style={{ fontFamily: "var(--font-dm-sans)", background: "none", cursor: "pointer", border: "none", borderBottom: "1px solid" }}
               >
@@ -259,31 +299,19 @@ export default function Booking() {
                   style={{ fontFamily: "var(--font-dm-sans)" }} />
               </div>
 
-                {/* Service */}
-                <div className="flex flex-col gap-2">
+              {/* Service */}
+              <div className="flex flex-col gap-2">
                 <label className="text-white/40 text-[9px] tracking-[0.2em] uppercase"
-                    style={{ fontFamily: "var(--font-dm-sans)" }}>Service *</label>
+                  style={{ fontFamily: "var(--font-dm-sans)" }}>Service *</label>
                 <select name="service" value={formData.service} onChange={handleChange}
-                    className="bg-charcoal border border-white/15 text-ivory px-4 py-3 text-sm outline-none focus:border-rose transition-colors duration-200 cursor-pointer"
-                    style={{ fontFamily: "var(--font-dm-sans)" }}>
-                    <option value="" disabled>Select a service</option>
-                    {services.map((s) => (
+                  className="bg-charcoal border border-white/15 text-ivory px-4 py-3 text-sm outline-none focus:border-rose transition-colors duration-200 cursor-pointer"
+                  style={{ fontFamily: "var(--font-dm-sans)" }}>
+                  <option value="" disabled>Select a service</option>
+                  {services.map((s) => (
                     <option key={s} value={s} style={{ backgroundColor: "#1C1C1E" }}>{s}</option>
-                    ))}
+                  ))}
                 </select>
-
-                {/* Custom service input — shows only when Other is selected */}
-                {formData.service === "Other (specify below)" && (
-                    <input
-                    name="customService"
-                    value={formData.customService}
-                    onChange={handleChange}
-                    placeholder="Tell us what service you need..."
-                    className="bg-transparent border border-rose/50 text-ivory placeholder:text-white/20 px-4 py-3 text-sm outline-none focus:border-rose transition-colors duration-200 mt-1"
-                    style={{ fontFamily: "var(--font-dm-sans)" }}
-                    />
-                )}
-                </div>
+              </div>
 
               {/* Date + Time */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
