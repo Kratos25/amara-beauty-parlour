@@ -282,7 +282,7 @@ export default function Footer() {
             <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
               <span style={{ color: "#B5485A", fontSize: "0.75rem" }}>◆</span>
               <a
-                href="mailto:hello@amarabeauty.com"
+                href="mailto:hello@amarabeautyparlour.com"
                 className="footer-link"
                 style={{
                   fontFamily: "var(--font-dm-sans)",
@@ -292,7 +292,7 @@ export default function Footer() {
                   transition: "color 0.2s ease",
                 }}
               >
-                hello@amarabeauty.com
+                hello@amarabeautyparlour.com
               </a>
             </div>
 

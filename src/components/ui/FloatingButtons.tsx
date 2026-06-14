@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function FloatingButtons() {
   const [open, setOpen] = useState(false);
 
-  const phone = "919999999999"; // Replace with your real number
+  const phone = "919922566151"; // Replace with your real number
   const waMessage = "Hi Amara Beauty Parlour! I'd like to book an appointment.";
   const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(waMessage)}`;
   const callUrl = `tel:+${phone}`;

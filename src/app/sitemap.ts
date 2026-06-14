@@ -3,25 +3,25 @@ import { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: "https://amarabeauty.com",
+      url: "https://amarabeautyparlour.com",
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: "https://amarabeauty.com/#services",
+      url: "https://amarabeautyparlour.com/#services",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: "https://amarabeauty.com/#gallery",
+      url: "https://amarabeautyparlour.com/#gallery",
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
     },
     {
-      url: "https://amarabeauty.com/#booking",
+      url: "https://amarabeautyparlour.com/#booking",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.9,

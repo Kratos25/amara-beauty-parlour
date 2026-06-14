@@ -46,16 +46,18 @@ export default function Testimonials() {
   }, [testimonials, active]);
 
   useEffect(() => {
-    const fetch = async () => {
-        const q = query(
-        collection(db, COLLECTIONS.testimonials),
-        where("active", "==", true)
-        );
-        const snap = await getDocs(q);
-        const data = snap.docs.map(d => ({ ...d.data() as any }));
+    const fetchData = async () => {
+      try {
+        const snap = await getDocs(collection(db, COLLECTIONS.testimonials));
+        const data = snap.docs
+          .map(d => d.data() as { name: string; service: string; review: string; rating: number; initial: string; active: boolean })
+          .filter(d => d.active === true);
         if (data.length > 0) setTestimonials(data);
+      } catch (err) {
+        console.error("Testimonials fetch error:", err);
+      }
     };
-    fetch();
+    fetchData();
   }, []);
 
   return (

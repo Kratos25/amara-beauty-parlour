@@ -76,7 +76,7 @@ export default function AdminLogin() {
                 type="email"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setError(""); }}
-                placeholder="admin@amarabeauty.com"
+                placeholder="admin@amarabeautyparlour.com"
                 className="bg-transparent border border-white/15 text-ivory placeholder:text-white/20 px-4 py-3 text-sm outline-none focus:border-rose transition-colors duration-200"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               />

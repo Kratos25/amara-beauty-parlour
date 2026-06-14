@@ -143,9 +143,9 @@ export default function Booking() {
           {/* Contact options */}
           <div className="flex flex-col gap-6">
             {[
-              { icon: "◆", label: "Phone",     value: "+91 99999 99999",      href: "tel:+919999999999" },
+              { icon: "◆", label: "Phone",     value: "+91 99225 66151",      href: "tel:+919922566151" },
               { icon: "◆", label: "WhatsApp",  value: "Chat with us",         href: "#" },
-              { icon: "◆", label: "Email",     value: "hello@amarabeauty.com", href: "mailto:hello@amarabeauty.com" },
+              { icon: "◆", label: "Email",     value: "hello@amarabeautyparlour.com", href: "mailto:hello@amarabeautyparlour.com" },
             ].map((item) => (
               <a key={item.label} href={item.href}
                 className="flex items-center gap-4 group"

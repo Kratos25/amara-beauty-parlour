@@ -40,6 +40,7 @@ export const metadata: Metadata = {
     "nail art",
     "keratin treatment",
     "Amara beauty",
+    "Amara beauty parlour",
     "beauty parlour near me",
     "luxury salon",
     "skin care",
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://amarabeauty.com",
+    url: "https://amarabeautyparlour.com",
     siteName: "Amara Beauty Parlour",
     title: "Amara Beauty Parlour | Luxury Beauty & Wellness",
     description:
@@ -99,7 +100,7 @@ export const metadata: Metadata = {
 
   // ── Canonical URL ──
   alternates: {
-    canonical: "https://amarabeauty.com",
+    canonical: "https://amarabeautyparlour.com",
   },
 };
 
@@ -121,16 +122,16 @@ export default function RootLayout({
               name: "Amara Beauty Parlour",
               description:
                 "Premium hair, skin, nail and bridal beauty services.",
-              url: "https://amarabeauty.com",
-              telephone: "+91-99999-99999",
+              url: "https://amarabeautyparlour.com",
+              telephone: "+91-99225-66151",
               priceRange: "₹₹",
-              image: "https://amarabeauty.com/images/og-image.jpg",
+              image: "https://amarabeautyparlour.com/images/og-image.jpg",
               address: {
                 "@type": "PostalAddress",
-                streetAddress: "Your Street Address",
-                addressLocality: "Your City",
-                addressRegion: "Your State",
-                postalCode: "000000",
+                streetAddress: "lane no 4, Gurunanak Nagar, Thergaon,",
+                addressLocality: "Pune",
+                addressRegion: "Maharashtra",
+                postalCode: "411033",
                 addressCountry: "IN",
               },
               openingHoursSpecification: [
@@ -148,8 +149,8 @@ export default function RootLayout({
                 },
               ],
               sameAs: [
-                "https://www.instagram.com/amarabeauty",
-                "https://www.facebook.com/amarabeauty",
+                "https://www.instagram.com/amara_beauty_parlour",
+                "https://www.facebook.com/amara_beauty_parlour",
               ],
               hasOfferCatalog: {
                 "@type": "OfferCatalog",

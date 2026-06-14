@@ -18,8 +18,8 @@ function useInView(threshold = 0.12) {
 }
 
 const stats = [
-  { n: "500+", l: "Clients Served" },
-  { n: "8+",   l: "Years of Practice" },
+  { n: "2000+", l: "Clients Served" },
+  { n: "12+",   l: "Years of Practice" },
   { n: "200+", l: "Bridal Looks" },
   { n: "100%", l: "Personal Attention" },
 ];
@@ -132,8 +132,8 @@ export default function About() {
               lineHeight: 1.5,
               margin: 0,
             }}>
-              "I never wanted to run a salon.<br />
-              I wanted to run a sanctuary."
+              "I never dreamed about success.<br />
+              I worked for it."
             </p>
           </div>
         </div>
